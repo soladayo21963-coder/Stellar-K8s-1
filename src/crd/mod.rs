@@ -87,6 +87,12 @@ pub use tenant::{
     TenantSpecCrd, TenantStatus, TenantUsageCrd, TenantUsageSpec, TenantUsageStatus,
 };
 
+// Ephemeral testnet CRD (issue #246)
+pub mod testnet;
+pub use testnet::{
+    StellarTestnet, StellarTestnetSpec, StellarTestnetStatus, StellarTestnetPhase, TestAccountSpec,
+};
+
 // New Epic CRDs (Wave 5)
 pub mod stellar_aiops;
 pub mod stellar_database;
