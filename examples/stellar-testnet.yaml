@@ -1,0 +1,49 @@
+# Example StellarTestnet manifest for ephemeral CI/CD testnet provisioning.
+# Apply with:
+#   kubectl apply -f examples/stellar-testnet.yaml
+#
+# The operator will:
+#   1. Spin up a stellar-core standalone Pod with an in-memory database.
+#   2. Attach a soroban-rpc sidecar for smart-contract interaction.
+#   3. Pre-fund the listed test accounts at genesis.
+#   4. Expose a ClusterIP Service and populate .status.rpcUrl.
+#   5. Automatically delete all owned resources when this CR is deleted.
+apiVersion: stellar.org/v1alpha1
+kind: StellarTestnet
+metadata:
+  name: ci-testnet
+  namespace: stellar-ci
+  labels:
+    app.kubernetes.io/part-of: stellar-k8s
+    env: ci
+spec:
+  # Container images
+  stellarCoreImage: "stellar/stellar-core:v21.0.0"
+  sorobanRpcImage:  "stellar/soroban-rpc:v21.0.0"
+
+  # Standalone network passphrase (must match Soroban SDK test config)
+  networkPassphrase: "Standalone Network ; February 2017"
+
+  # Pre-funded accounts created in the genesis ledger
+  testAccounts:
+    - name: deployer
+      balance: 100000000000   # 10 000 XLM
+    - name: alice
+      balance: 10000000000    # 1 000 XLM
+    - name: bob
+      balance: 10000000000    # 1 000 XLM
+
+  # Auto-delete after 1 hour (0 = indefinite)
+  ttlSeconds: 3600
+
+  # Expose via Ingress for out-of-cluster access (requires ingress-nginx)
+  exposeViaIngress: false
+  ingressClass: "nginx"
+
+  # Resource limits for the standalone core container
+  coreCpu: "500m"
+  coreMemory: "512Mi"
+
+  # Resource limits for the Soroban RPC sidecar
+  rpcCpu: "500m"
+  rpcMemory: "512Mi"

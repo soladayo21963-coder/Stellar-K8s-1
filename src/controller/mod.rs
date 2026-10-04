@@ -113,6 +113,10 @@ pub(crate) mod vsl;
 pub mod webhook_delivery;
 pub mod zk_archive_verifier;
 
+// Ephemeral testnet controller (issue #246)
+pub mod testnet;
+pub use testnet::run_testnet_controller;
+
 pub use anomaly_detection::{run_anomaly_detection, AnomalyDetector, AnomalyEvent};
 pub use archive_health::{
     calculate_backoff, check_archive_integrity, check_history_archive_health, ArchiveHealthResult,

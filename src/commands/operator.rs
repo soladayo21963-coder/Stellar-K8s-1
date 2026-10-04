@@ -438,6 +438,17 @@ pub async fn run_operator(args: RunArgs) -> Result<(), Error> {
         });
     }
 
+    // Start the StellarTestnet ephemeral testnet controller (issue #246)
+    {
+        let testnet_client = client.clone();
+        tokio::spawn(async move {
+            if let Err(e) = controller::run_testnet_controller(testnet_client).await {
+                tracing::error!("Testnet controller error: {:?}", e);
+            }
+        });
+        info!("StellarTestnet controller spawned");
+    }
+
     {
         let snapshot_client = client.clone();
         let snapshot_reporter = kube::runtime::events::Reporter {
